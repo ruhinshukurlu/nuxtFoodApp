@@ -9,8 +9,12 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@vuelidate/core": "^2.0.0-alpha.14",
+    "@vuelidate/validators": "^2.0.0-alpha.12",
     "core-js": "^3.9.1",
-    "nuxt": "^2.15.3"
+    "nuxt": "^2.15.3",
+    "uuid": "^8.3.2",
+    "vuelidate": "^0.7.6"
   },
   "devDependencies": {
     "fibers": "^5.0.0",

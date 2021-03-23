@@ -12,7 +12,7 @@
 
       <div class="quantity">
         <input type="number" min="1" v-model="count" />
-        <button class="primary" >
+        <button class="primary" @click="addCart">
           Add to Cart -${{ combinedPrice }}
         </button>
       </div>
@@ -27,6 +27,7 @@
             name="option"
             :id="option"
             :value="option"
+            v-model="$v.itemOptions.$model"
           />
           <label :for="option">{{ option }}</label>
         </div>
@@ -42,12 +43,21 @@
             name="addon"
             :id="addon"
             :value="addon"
+            v-model="$v.itemAddons.$model"
           />
           <label :for="addon">{{ addon }}</label>
         </div>
       </fieldset>
 
-      
+      <AppAlertSuccess v-if="cartSubmitted">
+        Order Submitted <br />
+        Check out more <nuxt-link to="/restaurants">restaurants</nuxt-link>
+      </AppAlertSuccess>
+
+      <AppAlert v-if="errors">
+        Please select options and
+        <br />addons before continuing
+      </AppAlert>
     </section>
 
     <section class="options">
@@ -58,13 +68,28 @@
 </template>
 <script>
 import { mapState } from "vuex";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   data() {
     return {
       id: this.$route.params.id,
       count: 1,
+      itemOptions: "",
+      itemAddons: [],
+      itemSizeAndCost: [],
+      cartSubmitted: false,
+      errors: false,
     };
+  },
+
+  validations : {
+    itemOptions: {
+      required,
+    },
+    itemAddons: {
+      required,
+    },
   },
 
   computed: {
@@ -87,6 +112,30 @@ export default {
       return total.toFixed(2);
     },
   },
+
+  methods: {
+    addCart() {
+      let formData = {
+        item: this.currentItem.item,
+        count: this.count,
+        options: this.itemOptions,
+        addOns: this.itemAddons,
+        combinedPrice: this.combinedPrice,
+      };
+
+      let addOnError = this.$v.itemAddons.$invalid;
+      let optionError = this.currentItem.options
+        ? this.$v.itemOptions.$invalid
+        : false;
+      if (addOnError || optionError) {
+        this.errors = true;
+      } else {
+        this.errors = false;
+        this.cartSubmitted = true;
+        this.$store.commit("addToCart", formData);
+      }
+    },
+  },
 };
 </script>
 
@@ -101,6 +150,7 @@ export default {
   grid-column-gap: 60px;
   grid-row-gap: 60px;
   line-height: 2;
+  min-height: 80vh;
 }
 .image {
   grid-area: 1 / 1 / 2 / 2;
