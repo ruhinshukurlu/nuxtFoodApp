@@ -1,12 +1,18 @@
 <template>
   <main class="container">
       <AppHeader />
-      <AppRestaurantInfo />
+      <AppRestaurantInfo :data='fooddata' />
   </main>
 </template>
 
 <script>
-export default {}
+
+import { mapState } from 'vuex'
+export default {
+  computed: {
+    ...mapState(['fooddata'])
+  },
+}
 </script>
 
 <style>

@@ -10,7 +10,6 @@ export const mutations = {
 }
 
 
-
 export const actions = {
   async getFoodData({ state, commit }){
     if (state.fooddata.length) return
